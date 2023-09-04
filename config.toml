@@ -1,0 +1,86 @@
+baseURL = 'http://localhost/'
+languageCode = 'en-us'
+title = "Tomáš Pánik"
+theme = 'hugo-geekblog'
+
+pluralizeListTitles = false
+
+# Geekblog required configuration
+pygmentsUseClasses = true
+pygmentsCodeFences = true
+disablePathToLower = true
+
+defaultContentLanguage = 'en'
+defaultContentLanguageInSubdir = true
+
+[languages]
+  [languages.en]
+    contentDir = 'content/en'
+    disabled = false
+    languageCode = 'en-US'
+    languageDirection = 'ltr'
+    languageName = 'English'
+    title = 'Tomáš Pánik'
+    weight = 1
+    [languages.en.params]
+      subtitle = "A Principal Developer's Journal"
+  [languages.cs]
+    contentDir = 'content/cs'
+    disabled = false
+    languageCode = 'cs-CZ'
+    languageDirection = 'ltr'
+    languageName = 'Česky'
+    title = 'Tomáš Pánik'
+    weight = 2
+    [languages.cs.params]
+      subtitle = 'Deník vývojáře'
+
+# Needed for mermaid shortcodes
+[markup]
+  [markup.goldmark.renderer]
+    unsafe = true
+  [markup.tableOfContents]
+    startLevel = 1
+    endLevel = 9
+
+[taxonomies]
+  author = "authors"
+  tag = "tags"
+
+[mediaTypes]
+  [mediaTypes."application/atom+xml"]
+    suffixes = ["xml"]
+
+[outputFormats]
+  [outputFormats.Atom]
+    name = "Atom"
+    mediaType = "application/atom+xml"
+    baseName = "feed"
+    isPlainText = false
+    rel = "alternate"
+    isHTML = false
+    noUgly = true
+    permalinkable = false
+
+[outputs]
+  home = ["HTML", "ATOM"]
+  page = ["HTML"]
+  section = ["HTML"]
+  taxonomy = ["HTML"]
+  term = ["HTML", "ATOM"]
+
+[params]
+  subtitle = "A Principal Developer's Journal"
+  description = ""
+  keywords = []
+  images = []
+
+  logo = "brandT.svg"
+
+  geekblogAuthor = "Tomáš Pánik"
+  geekblogDarkModeToggle = false
+  geekblogDarkModeCode = true
+  
+  [params.geekblogHostedOn]
+    name = "GitHub Pages"
+    link = "https://pages.github.com"

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="{{ .Site.Language.Lang }}" class="color-toggle-hidden">
+  <head>
+    {{ partial "head/meta" . }}
+    <title>{{ i18n "lost_dont_worry" }}</title>
+    {{ partial "head/favicons" . }}
+    {{ partial "head/others" . }}
+  </head>
+
+  <body>
+    {{ partial "svg-sprites" . }}
+    <div class="wrapper">
+      {{ partial "site-header" . }}
+      <main class="gblog-error flex-even">
+        <div class="flex align-center justify-center">
+          <div class="gblog-error__icon">
+            <svg class="gblog-icon gblog_cloud_off"><use xlink:href="#gblog_cloud_off"></use></svg>
+          </div>
+          <div class="gblog-error__message">
+            <div class="gblog-error__line gblog-error__title">{{ i18n "lost" }}</div>
+            <div class="gblog-error__line gblog-error__code">{{ i18n "error_404" }}</div>
+            <div class="gblog-error__line gblog-error__help">
+              {{ i18n "error_help" (dict "BaseURL" .Site.BaseURL) }}
+            </div>
+          </div>
+        </div>
+      </main>
+      {{ partial "site-footer" . }}
+    </div>
+  </body>
+</html>

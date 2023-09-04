@@ -1,0 +1,78 @@
+[updated_on]
+other = "Updated on"
+
+[min_read]
+other = "{{ .Count }} min read"
+
+[read_full_post]
+other = "Read full post"
+
+[read_more]
+other = "Read more"
+
+[posts]
+one = "post"
+other = "{{ .PageCount }} posts"
+
+[by]
+other = "by"
+
+[site_logo]
+other = "Site Logo"
+
+[navigation]
+other = "Navigation"
+
+[rss]
+other = "RSS"
+
+[legal_notice]
+other = "Legal Notice"
+
+[privacy_policy]
+other = "Privacy Policy"
+
+[back_to_top]
+other = "Back to top"
+
+[built_with]
+other = "Built with"
+
+[with]
+other = "with"
+
+[and_hosted_on]
+other = "and hosted on"
+
+[content_licensed_under]
+other = "Content licensed under"
+
+[prev]
+other = "PREV"
+
+[page_info]
+other = "Page {{ .PageNumber }} of {{ .TotalPages }}"
+
+[next]
+other = "NEXT"
+
+[pinned]
+other = "Pinned"
+
+[all_posts_tagged_with]
+other = "All posts tagged with '{{ . }}'"
+
+[all_posts_of_author]
+other = "All posts of this author"
+
+[lost_dont_worry]
+other = "Lost? Don't worry"
+
+[lost]
+other = "Lost?"
+
+[error_404]
+other = "Error 404"
+
+[error_help]
+other = "Seems like what you are looking for can't be found. Don't worry we can bring you back to the <a class='gblog-error__link' href='{{ .BaseURL }}'>homepage</a>."

@@ -1,0 +1,61 @@
+{{ define "main" }}
+  {{ $pages := where .RegularPages "Type" "in" .Site.Params.mainSections }}
+  {{ if (eq .Kind "home") }}
+    {{ $pages = where .Site.RegularPages "Type" "in" .Site.Params.mainSections }}
+  {{ end }}
+
+  {{ $paginator := .Paginate $pages }}
+  {{ range $paginator.Pages }}
+    <article class="gblog-post">
+      <header class="gblog-post__header">
+        <h1 class="gblog-post__title">
+          <a href="{{ .RelPermalink }}">{{ partial "utils/title" . }}</a>
+        </h1>
+        <div class="flex flex-wrap align-center gblog-post__meta gblog-post__subtitle">
+          <span class="flex align-center no-wrap">
+            <svg class="gblog-icon gblog_date"><use xlink:href="#gblog_date"></use></svg>
+            <span class="gblog-post__tag">
+              <time datetime="{{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" | safeHTML }}">
+                {{ if .Lastmod.After (.Date.AddDate 0 0 1) }}
+                  {{ i18n "updated_on" }}
+                {{ end }}
+                {{ if eq .Site.Language.Lang "cs" }}
+                  {{ .Lastmod.Format "02.01.2006" }}
+                {{ else }}
+                  {{ .Lastmod.Format "Jan 2, 2006" }}
+                {{ end }}
+              </time>
+            </span>
+          </span>
+          
+          <span class="flex align-center no-wrap">
+            <svg class="gblog-icon gblog_timer"><use xlink:href="#gblog_timer"></use></svg>
+            <span class="gblog-post__tag">{{ i18n "min_read" (dict "Count" .ReadingTime) }}</span>
+          </span>
+        </div>
+      </header>
+
+      <section class="gblog-markdown">
+        {{ .Summary }}
+      </section>
+      <div class="gblog-post__readmore">
+        {{ if or .Truncated .Params.summary }}
+          <a
+            class="flex-inline align-center fake-link"
+            title="{{ i18n "read_full_post" }}"
+            href="{{ .RelPermalink }}"
+          >
+          {{ i18n "read_more" }}
+          </a>
+        {{ end }}
+      </div>
+
+      <footer class="gblog-post__footer">
+        <div class="flex flex-wrap align-center gblog-post__meta">
+          {{ partial "metadata.html" . }}
+        </div>
+      </footer>
+    </article>
+  {{ end }}
+  {{ partial "pagination.html" . }}
+{{ end }}

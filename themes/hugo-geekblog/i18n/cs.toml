@@ -1,0 +1,78 @@
+[updated_on]
+other = "Aktualizováno dne"
+
+[min_read]
+other = "{{ .Count }} minut čtení"
+
+[read_full_post]
+other = "Přečíst celý příspěvek"
+
+[read_more]
+other = "Číst dál"
+
+[posts]
+one = "příspěvek"
+other = "{{ .PageCount }} příspěvků"
+
+[by]
+other = "od"
+
+[site_logo]
+other = "Logo stránky"
+
+[navigation]
+other = "Navigace"
+
+[rss]
+other = "RSS"
+
+[legal_notice]
+other = "Právní oznámení"
+
+[privacy_policy]
+other = "Zásady ochrany osobních údajů"
+
+[back_to_top]
+other = "Zpět nahoru"
+
+[built_with]
+other = "Postaveno na"
+
+[with]
+other = "s"
+
+[and_hosted_on]
+other = "a hostováno na"
+
+[content_licensed_under]
+other = "Obsah licencován pod"
+
+[prev]
+other = "Předchozí"
+
+[page_info]
+other = "Stránka {{ .PageNumber }} z {{ .TotalPages }}"
+
+[next]
+other = "Další"
+
+[pinned]
+other = "Připnuto"
+
+[all_posts_tagged_with]
+other = "Všechny příspěvky označené s '{{ . }}'"
+
+[all_posts_of_author]
+other = "Všechny příspěvky tohoto autora"
+
+[lost_dont_worry]
+other = "Ztracen? Nevadí"
+
+[lost]
+other = "Ztracen?"
+
+[error_404]
+other = "Chyba 404"
+
+[error_help]
+other = "Vypadá to, že to, co hledáte, nelze nalézt. Nevadí, můžeme vás přesměrovat na <a class='gblog-error__link' href='{{ .BaseURL }}'>hlavní stránku</a>."

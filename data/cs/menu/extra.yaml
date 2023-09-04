@@ -1,0 +1,14 @@
+---
+footer:
+  - name: Github Profil
+    icon: gblog_github
+    ref: "https://github.com/gantrior"
+    external: true
+  - name: StackOverflow
+    icon: stack-overflow
+    ref: "http://stackoverflow.com/users/500082"
+    external: true
+
+headline:
+  - name: O mně
+    ref: "/about"

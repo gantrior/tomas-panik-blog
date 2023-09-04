@@ -1,0 +1,96 @@
+/* Zen Garden Theme */
+
+:root {
+  --header-background: #227014;
+  --header-font-color: #FCF3CF;
+
+  --body-background: #303030;
+  --body-font-color: #ffffff;
+
+  --mark-color: #F39C12;
+
+  --button-background: #58D68D;
+  --button-border-color: #28B463;
+
+  --link-color: #5fd1f1;
+  --link-color-visited: #5fd1f1;
+
+  --code-background: #4a4a4a;
+  --code-accent-color: #bf7c46;
+  --code-accent-color-lite: #283747;
+  --code-font-color: #A9DFBF;
+
+  --code-copy-background: #2E4053;
+  --code-copy-font-color: #82E0AA;
+  --code-copy-border-color: #58D68D;
+  --code-copy-success-color: #F39C12;
+
+  --accent-color-dark: #af6a31;
+  --accent-color: rgb(248, 249, 250);
+  --accent-color-lite: rgba(0, 0, 0, 0);
+
+  --control-icons: #F39C12;
+
+  --footer-background: #117A65;
+  --footer-font-color: #FCF3CF;
+  --footer-link-color: #5fd1f1;
+  --footer-link-color-visited: #1E8449;
+}
+
+.gblog-header {
+  background-image: url("img/gradient.png");
+  background-size: 100% 100%;
+}
+.gblog-nav {
+  background: #1b1b1b;
+  
+  border-top: 2px solid #303030;
+}
+.gblog-footer {
+  background: rgb(39, 39, 39);
+}
+.gblog-post__meta>span:not(.tag):not(:last-child) {
+  margin-right: 1em;
+}
+h1.gblog-post__title {
+  margin-bottom: 0px;
+}
+.gblog-post__subtitle {
+  margin-bottom: 1em;
+}
+p, section {
+    text-align:justify;
+}
+.gblog-post__readmore {
+  margin: 1rem 0;
+}
+.footer-muted {
+  font-size: 0.7em;
+  font-style: italic;
+}
+.footer-background {
+  background-image: url("img/gradient-rotated.png");
+  background-size: 100% 100%;
+}
+.gblog-button:hover {
+  background: #1c4764;
+  border-color: rgb(248, 249, 250);
+}
+.gblog-flag-parent {
+  align-self: start;
+  padding-top: 10px;
+}
+.gblog-flag {
+  display: flex;
+  justify-content: flex-end;
+}
+.gblog-headline-parent {
+  align-self: start;
+  padding-top: 10px;
+  margin-right: 10px;
+}
+.gblog-headline-item {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}

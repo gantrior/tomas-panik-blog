@@ -1,0 +1,31 @@
+{{ $current := .current }}
+{{ template "headline-file" dict "sect" .source "current" $current "site" $current.Site "target" .target }}
+
+
+<!-- template -->
+{{ define "headline-file" }}
+  {{ $current := .current }}
+  {{ $site := .site }}
+  {{ $target := .target }}
+
+  {{ range sort (default (seq 0) .sect) "weight" }}
+    {{ if isset . "ref" }}
+      {{ $this := $site.GetPage .ref }}
+      {{ $isCurrent := eq $current $this }}
+      {{ $icon := default false .icon }}
+
+      <span class="gblog-headline-parent">
+        <a href="{{ if .external -}}
+            {{ .ref }}
+          {{- else -}}
+            {{ relref $current .ref }}
+          {{- end }}" class="gblog-headline-item">
+          {{ if $icon }}
+            <svg class="gblog-icon {{ .icon }}"><use xlink:href="#{{ .icon }}"></use></svg>
+          {{ end }}
+          {{ .name }}
+        </a>
+      </span>
+    {{ end }}
+  {{ end }}
+{{ end }}
