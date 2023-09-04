@@ -3,6 +3,7 @@ title: About Me
 resources:
   - name: profile
     src: "images/profile.jpg"
+disable_comments: true
 ---
 
 <!-- markdownlint-disable MD033 -->

@@ -3,6 +3,7 @@ title: O mně
 resources:
   - name: profile
     src: "images/profile.jpg"
+disable_comments: true
 ---
 
 {{< columns size=small >}}
