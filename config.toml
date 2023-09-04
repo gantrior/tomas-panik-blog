@@ -84,3 +84,17 @@ defaultContentLanguageInSubdir = true
   [params.geekblogHostedOn]
     name = "GitHub Pages"
     link = "https://pages.github.com"
+
+  [params.giscus]
+    repo = "gantrior/tomas-panik-blog"
+    repoID = "R_kgDOKOxIRA"
+    category = "Announcements"
+    categoryID = "DIC_kwDOKOxIRM4CZEzu"
+    mapping = "og:title"
+    strict = "0"
+    reactionsEnabled = "1"
+    emitMetadata = "0"
+    inputPosition = "bottom"
+    theme = "dark"
+    lang = "en"
+    loading = "lazy"  
