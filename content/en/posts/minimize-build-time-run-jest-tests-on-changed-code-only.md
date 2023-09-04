@@ -1,7 +1,7 @@
 ---
 title: "Minimize Build Time: How to run Jest Tests on Changed Code Only"
-date: 2023-09-02
-draft: true
+date: 2023-09-04
+draft: false
 tags:
   - React
   - Testing

@@ -1,7 +1,7 @@
 ---
 title: "Minimalizujte dobu buildu: Jak spustit Jest testy pouze na změněném kódu"
-date: 2023-09-02
-draft: true
+date: 2023-09-04
+draft: false
 tags:
   - React
   - Testing
