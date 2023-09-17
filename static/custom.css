@@ -207,3 +207,24 @@ p, section {
   justify-content: flex-end;
   align-items: center;
 }
+
+@media screen and (max-width: 39rem) {
+  .gblog-header__col-3 {
+    flex-wrap: wrap;
+    flex-direction: column;
+    justify-content: start;
+    align-items: end;
+  }
+
+  .gblog-headline-parent {
+    align-self: end;
+    padding-top: 10px;
+    margin-right: 0px;
+  }
+
+  .gblog-flag-parent {
+    align-self: end;
+    padding-top: 10px;
+  }
+}
+
