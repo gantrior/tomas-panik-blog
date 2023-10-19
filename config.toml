@@ -80,7 +80,7 @@ defaultContentLanguageInSubdir = true
   geekblogAuthor = "Tomáš Pánik"
   geekblogDarkModeToggle = false
   geekblogDarkModeCode = true
-  
+  geekblogToC = 1
   [params.geekblogHostedOn]
     name = "GitHub Pages"
     link = "https://pages.github.com"
