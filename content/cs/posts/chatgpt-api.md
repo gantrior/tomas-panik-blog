@@ -10,11 +10,13 @@ authors:
   - tomas-panik
 ---
 
-Tento článek je pro ty vývojáře, kteří si ještě nevyzkoušeli ChatGPT API. Já si to nedávnou vyzkoušel a musím konstatovat, že to skýtá velký potenciál. Zde je tedy podrobnější návod, jak na to.
+Tento článek je pro ty vývojáře, kteří si ještě nevyzkoušeli ChatGPT API. Já si to nedávno vyzkoušel a musím konstatovat, že to skýtá velký potenciál. Zde je tedy podrobnější návod, jak na to.
 
 {{< toc >}}
 
-Než začneme, tak ..
+---
+
+Než začneme, tak ...
 
 ## Co je to "token" a kolik stojí dotazy na OpenAI API?
 
@@ -72,7 +74,7 @@ Dotazy na OpenAI API nejsou zadarmo, ale noví uživatelé mají počáteční b
 
 Model `gpt-3.5-turbo`, který budeme dále používat, je velmi cenově příznivý. Jeho cena je pro vstupní data $0.0015 / 1000 tokenů a výstupní data $0.002 / 1000 tokenů.
 
-Kompletní ceník je dostupný zde: https://openai.com/pricing
+Kompletní ceník je dostupný zde: [OpenAI Pricing](https://openai.com/pricing)
 
 ---
 
@@ -126,7 +128,7 @@ Bonjour, comment ça va ?
 ## Porozumění odpovědi
 Požadavek na API vrací odpověď ve formátu JSON, který obsahuje několik užitečných informací, ale nás zajímá pouze klíč `choices`, který obsahuje pole s odpověďmi, v našem případě je pouze jedna odpověď, obsahující textový řetězec, který je výstupem modelu. Používáme metodu `strip()` k odstranění přebytečných bílých znaků z výstupu.
 
-## Vysvětlení "role"
+## Vysvětlení parametru "role"
 Role sděluje modelu, jak by měl obsah zpracovat. Zde je popis rolí:
 * **user** - informuje model, že následující obsah pochází od uživatele – tj. od osoby, která položila otázku,
 * **asistent** - informuje model, že obsah byl vygenerován jako reakce na uživatele,
@@ -199,7 +201,7 @@ Byl jednou malý kluk, který se nemohl v noci dobře uklidnit. Jednoho večera 
 ```
 
 ### Další parametry
-Další parametry můžete prozkoumat v dokumentaci: https://platform.openai.com/docs/api-reference/chat/create
+Další parametry můžete prozkoumat v dokumentaci: [OpenAI API Documentation](https://platform.openai.com/docs/api-reference/chat/create)
 
 ## Limitování tokenů v dotazech
 

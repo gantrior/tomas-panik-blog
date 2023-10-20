@@ -14,6 +14,8 @@ This article is for developers who haven't yet tried the ChatGPT API. I recently
 
 {{< toc >}}
 
+---
+
 Before we start ..
 
 ## What is a "Token" and How Much Do OpenAI API Queries Cost?
@@ -97,7 +99,7 @@ import openai
 openai.api_key = 'sk-abcdefgh1234567890'
 ```
 
-Now that our environment is prepared, we can start sending our first requests to ChatGPT via the OpenAI GPT-3.5 API!
+Our environment is now prepared so we can start sending our first requests to ChatGPT via the OpenAI GPT-3.5 API!
 
 ## Sending a Basic Request
 We will send the request using `openai.ChatCompletion.create` as follows:
@@ -125,7 +127,7 @@ Roles tell the model how it should process the content. Here is the description 
 
 * **user** - informs the model that the subsequent content comes from the user – i.e., the person who asked the question,
 * **assistant** - informs the model that the content was generated in response to the user,
-* **system** - a message specified by the developer to "guide" the model's answer. Depending on the model used, the system message can have a greater or lesser impact on the actual model answers.
+* **system** - a message specified by the developer to "guide" the model's answer. Depending on the model used, the system message can have more or less impact on the actual model answers.
 
 ## Working with Conversation Context
 When working with ChatGPT, it is essential to understand how the API handles the context of the conversation. If you want the API to consider previous responses in the context, you need to send the entire conversation history. This way, the model can see the entire conversation and respond consistently with previous messages.
@@ -174,7 +176,7 @@ Once upon a time, in a faraway land, there was a curious little bunny named Benn
 ```
 
 ### "Temperature"
-The `temperature` parameter influences the creativity of the answer. A lower value (e.g., 0.2) generates more consistent, less creative text, while a higher value (e.g., 0.8) generates more creative but less predictable text.
+The `temperature` parameter influences the creativity of the answer. A smaller value (e.g., 0.2) generates more consistent, less creative text, while a bigger value (e.g., 0.8) generates more creative but less predictable text.
 
 ```python
 response = openai.ChatCompletion.create(
@@ -195,13 +197,11 @@ Once upon a time, in a magical forest, a little bear named Benny dreamed big. Wi
 ### Additional Parameters
 You can explore additional parameters in the documentation: [OpenAI API Documentation](https://platform.openai.com/docs/api-reference/chat/create)
 
-Certainly, here's the English translation of the entire block of text:
-
 ## Limiting Tokens in Queries
 
-Given that calling the OpenAI API costs tokens and the models have a predefined number of tokens they can work with at once, it's important to know how to limit them in API queries. When the number of tokens exceeds the limit, the API will return an error and won't execute.
+Since OpenAI API calls are paid for tokens and the models have a predefined number of tokens they can work with at once, it's important to know how to limit them in API queries. When the number of tokens exceeds the limit, the API will return an error and won't execute.
 
-There are multiple ways to handle larger messages; they can be broken down into smaller messages. I have trimmed the excess:
+There are multiple ways to handle larger messages; they can be broken down into smaller messages. I trimmed the excess parts:
 
 ```python
 import tiktoken
