@@ -1,7 +1,7 @@
 ---
 title: "ChatGPT API Basics for Developers (in Python)"
-date: 2023-10-19
-draft: true
+date: 2023-10-22
+draft: false
 tags:
   - AI
   - Python
