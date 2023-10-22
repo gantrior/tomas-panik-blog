@@ -13,6 +13,8 @@ disablePathToLower = true
 defaultContentLanguage = 'en'
 defaultContentLanguageInSubdir = true
 
+enableRobotsTXT = true
+
 [languages]
   [languages.en]
     contentDir = 'content/en'
