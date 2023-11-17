@@ -14,3 +14,6 @@ Publish the site
 ```
 hugo
 ```
+
+# Documentation
+https://hugo-geekblog.geekdocs.de
