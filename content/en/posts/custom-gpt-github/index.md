@@ -25,7 +25,7 @@ resources:
     title: DEMO
 ---
 
-OpenAI recently introduced [custom GPT's](https://openai.com/blog/introducing-gpts). Lets briefly sum-up what GPT's are compared to classical ChatGPT: 
+OpenAI recently introduced [custom GPTs](https://openai.com/blog/introducing-gpts). Let's briefly sum-up what GPTs are compared to classical ChatGPT: 
 
 1. It contains custom predefined instructions
 2. It has custom conversation starters
@@ -35,28 +35,28 @@ OpenAI recently introduced [custom GPT's](https://openai.com/blog/introducing-gp
     * Code interpreter
     * Plugins - plugins got kind of deprecated, it is now called "custom Actions"
 
-What is especially interesting is last part, where it is much easier now to create integrations with custom actions. Developers no longer need to create plugin (which was complex process), but it can be now done by anyone. 
+What is especially interesting is last part, where creating integrations with custom actions is now much easier. Developers no longer need to create plugin (which was complex process), but now, anyone can do it. 
 
-So lets try to build GPT that will help developers with PR reviews. 
+So let's try to build GPT that will help developers with PR reviews. 
 
 # Creating GPT
-Starting with custom GPT you must have GPT Plus subscription. It can be created by clicking `Explore` and than `Create a GPT`
+Starting with custom GPT you must have GPT Plus subscription. It can be created by clicking `Explore` and then `Create a GPT`
 
 {{< img name="create-a-gpt" lazy=false size="origin" >}}
 
 # Goal
-Now lets review how we want to use GPT:
+Now let's review how we want to use GPT:
 
-* I want to paste it GitHub PR Url which I want it to review
+* I want to paste the GitHub PR URL which I want it to review
 * It will download diff of PR using GitHub API (authenticate as me so it will have access even to private repositories)
 * It will review diff, analyze it for bugs, code smells and suggest improvements
 * It will write back those findings and it will ask me if I want to create PR review in pending state using those findings as comments
 * By typing "Yes" it will submit PR review
 
-So it will be assisting with PR reviews. I want to use GPT's comments just as a hint what I should look at, so I will be updating/deleting his comments most of the time. So we must make sure that review submitted to GitHub remains in PENDING state. And those comments must be recognizable so will prefix with `By GPT:`.
+In this way, it will assist with PR reviews. I want to use GPTs comments just as a hint what I should look at, so I will be updating/deleting his comments most of the time. So we must make sure that review submitted to GitHub remains in PENDING state. And those comments must be recognizable so will prefix with `By GPT:`.
 
 # GPT configuration
-So lets go ahead and configure GPT, we will skip GPT Builder and configure everything manually.
+So let's go ahead and configure GPT, we will skip GPT Builder and configure everything manually.
 
 ## Title and description
 I set following
@@ -68,10 +68,10 @@ Description: `Expert at GitHub PR code reviews, using GitHub API for insightful 
 
 ## Actions
 
-before configuring instructions, lets configure actions first, as it is fundamental part of the configuration.
+before configuring instructions, let's configure actions first, as it is fundamental part of the configuration.
 Actions are manifest of [OpenAPI specification](https://spec.openapis.org/oas/v3.1.0) written in JSON format. 
 
-Lets click `Create new actions` in GPT configuration and set following schema:
+Let's click `Create new actions` in GPT configuration and set following schema:
 ```json
 {
   "openapi": "3.1.0",
@@ -468,22 +468,22 @@ Explanation of instructions:
 * GPT is clearly instructed how he should respond with `Findings`. 
   * I had to set `IMPORTANT` on instruction to not explain what the code is doing, because GPT was doing that all the time.
 * GPT is instructed how he should submit review
-  * GPT was tending to set `position` incorrectly, he was setting it as line of code. So I instructed him with full documentation and even with example of how `position` is calculated. 
+  * GPT was tending to set `position` incorrectly, setting it too high, e.q. it was setting it as line of code. So I instructed him with full documentation and even with example of how `position` is calculated. 
 
 ## Conversation starters
-Lets set just one `Review PR`, this is message what we explicitly instructed GPT on.
+Let's set just one `Review PR`, this is message what we explicitly instructed GPT on.
 
 # Lets test it
-Now lets test it on one PR done by dependabot in repo of this blogpost: https://github.com/gantrior/tomas-panik-blog/pull/5
+Now let's test it on one PR done by dependabot in repo of this blogpost: https://github.com/gantrior/tomas-panik-blog/pull/5
 
 {{< img name="pr-review-demo" lazy=false size="origin" >}}
 
 Great! It works. 
 
 # A little tuning..
-Now lets try if GPT can skip responding comments to the user and submit comments directly, which would speed up the review a little bit. 
+Now let's try if GPT can skip responding comments to the user and submit comments directly, which would speed up the review a little bit. 
 
-Lets add following to the end of instructions:
+Let's add following to the end of instructions:
 ```
 # When user request you to review PR with review submission
 If the request is `Review PR with review submission` you will only answer `Which PR?` and wait for user to submit PR link. After user provides PR url, you will review PR with the rules above, but do not print anything to the user, but you will assume that user wants you to submit findings as PR review. So you will submit review right away
@@ -496,7 +496,7 @@ And add new conversation starter: `Review PR with review submission`
 A little bit faster now.
 
 # Conclusion
-We have built GPT that could help us doing code reviews more efficiently. Custom GPT's shows us great potential, so lets see what we can build with it next. I will follow with other ideas with upcoming blog posts.
+We have built GPT that could help us doing code reviews more efficiently. Custom GPTs shows us great potential, so let's see what we can build with it next. Keep an eye out on my upcoming blog posts as I will share more ideas of custom GPTs.
 
 
 
