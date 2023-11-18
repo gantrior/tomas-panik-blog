@@ -1,5 +1,5 @@
 ---
-title: "Custom GPT for GitHub PR reviews"
+title: "Custom GPT for GitHub Pull Request reviews"
 date: 2023-11-17
 draft: true
 tags:
@@ -29,49 +29,53 @@ OpenAI recently introduced [custom GPTs](https://openai.com/blog/introducing-gpt
 
 1. It contains custom predefined instructions
 2. It has custom conversation starters
-3. It can now contain multiple capabilities at once, in classic ChatGPT you had to choose one. Those are:
+3. It can now contain multiple capabilities at once (in classic ChatGPT you had to choose one). Those are:
     * Web browsing
     * DALL-E image generation
     * Code interpreter
-    * Plugins - plugins got kind of deprecated, it is now called "custom Actions"
+    * Custom Actions (plugins got kind of deprecated)
 
-What is especially interesting is last part, where creating integrations with custom actions is now much easier. Developers no longer need to create plugin (which was complex process), but now, anyone can do it. 
+Especially, The last option is interesting, as it is now much easier to create integrations with custom actions. Developers no longer need to create plugin (which was such complex process).
 
-So let's try to build GPT that will help developers with PR reviews. 
+So let's try to build GPT that will help developers with Pull request (PR) reviews. 
 
-# Creating GPT
-Starting with custom GPT you must have GPT Plus subscription. It can be created by clicking `Explore` and then `Create a GPT`
+# Steps
+Goal is to review existing GitHub PR by GPT. In case of any issue found GPT creates comments (in PENDING state).
+
+Let's define the steps:
+
+1. (As a reviewer) I will paste GitHub PR URL to GPT
+2. It will download diff of PR using GitHub API (authenticated as me so it will have access even to private repositories)
+3. It will review diff, analyze it for bugs, code smells and suggest improvements
+4. It will write back those findings and ask me if I want to submit review comments in PENDING state
+5. By typing "Yes" it will submit these review commets
+
+The purpose is not to submit all GPT suggestions without human check. I want to use GPTs comments just as a hint what I should look at, so I will be updating/deleting it's comments most of the time. Therefore we must make sure that review submitted to GitHub remains in PENDING state and those automatic comments are recognizable so I use `By GPT:` prefix.
+
+# Creating custom GPT
+Starting with custom GPT you must have GPT Plus subscription! 
+Go to ChatGTP website. It can be created by clicking `Explore` and then `Create a GPT` (see picture bellow).
 
 {{< img name="create-a-gpt" lazy=false size="origin" >}}
-
-# Goal
-Now let's review how we want to use GPT:
-
-* I want to paste the GitHub PR URL which I want it to review
-* It will download diff of PR using GitHub API (authenticate as me so it will have access even to private repositories)
-* It will review diff, analyze it for bugs, code smells and suggest improvements
-* It will write back those findings and it will ask me if I want to create PR review in pending state using those findings as comments
-* By typing "Yes" it will submit PR review
-
-In this way, it will assist with PR reviews. I want to use GPTs comments just as a hint what I should look at, so I will be updating/deleting his comments most of the time. So we must make sure that review submitted to GitHub remains in PENDING state. And those comments must be recognizable so will prefix with `By GPT:`.
 
 # GPT configuration
 So let's go ahead and configure GPT, we will skip GPT Builder and configure everything manually.
 
 ## Title and description
-I set following
+I set following:
 
 Name: `GitHub PR Code Reviewer`
+
 Description: `Expert at GitHub PR code reviews, using GitHub API for insightful feedback.`
 
 {{< img name="title-and-description" lazy=false size="origin" >}}
 
 ## Actions
 
-before configuring instructions, let's configure actions first, as it is fundamental part of the configuration.
+Let's configure actions first before instructions, as it is fundamental part of the configuration.
 Actions are manifest of [OpenAPI specification](https://spec.openapis.org/oas/v3.1.0) written in JSON format. 
 
-Let's click `Create new actions` in GPT configuration and set following schema:
+Click `Create new actions` in GPT configuration and set following schema:
 ```json
 {
   "openapi": "3.1.0",
@@ -365,14 +369,14 @@ Let's click `Create new actions` in GPT configuration and set following schema:
 }
 ```
 
-We allow him to do 3 actions using GitHub API:
-* GetPullRequestDiff (`GET` - `/repos/{owner}/{repo}/pulls/{pull_number}/files`) - download diff's for all files in PR
-  * I tried to use `/repos/{owner}/{repo}/pulls/{pull_number}` with header `Accept` set to `application/vnd.github.v3.diff`, but it turns out that GPT is not allowed to set headers, so it can use only endpoints where overriding header is not necessary. 
-* GetFileContent (`GET` - `/repos/{owner}/{repo}/contents/{path}`) - optional. I don't know if GPT will ever use this.
-* SubmitPullRequestReview (`POST` - `/repos/{owner}/{repo}/pulls/{pull_number}/reviews`) - submitting PR review
-  * Note that we don't define `event` property for body, because we don't want GPT to fill it. This will make sure that it will have always PR in pending state.
+We allow GPT to do 3 actions using GitHub API:
+* **GetPullRequestDiff** (`GET` - `/repos/{owner}/{repo}/pulls/{pull_number}/files`) - download diff's for all files in PR
+  * Note: I tried to use `/repos/{owner}/{repo}/pulls/{pull_number}` with header `Accept` set to `application/vnd.github.v3.diff`, but it turns out that GPT is not allowed to set headers, so it can use only endpoints where overriding header is not necessary. 
+* **GetFileContent** (`GET` - `/repos/{owner}/{repo}/contents/{path}`) - optional. I don't know if GPT will ever use this.
+* **SubmitPullRequestReview** (`POST` - `/repos/{owner}/{repo}/pulls/{pull_number}/reviews`) - submitting PR review
+  * Note: We don't define `event` property for body, because we don't want GPT to fill it. This will make sure that the PR comment is always in PENDING state.
 
-### Authentication
+## Authentication
 There are two ways how GPT can authenticate with API requests:
 * API key - basic, bearer or custom
 * OAuth
@@ -462,19 +466,19 @@ Here are rules of submitted comments:
 ```
 
 Explanation of instructions:
-* When user writes `Review PR` (Which I will use as conversation started) GPT is instructed to just answer `Which PR?` to minimize text output for most common scenario. User can also write PR Url directly, but that wouldn't sound like a chat right?
-* GPT is instructed how he should proceed with PR Url and also that he can optionally download also full file content for broader context.
-* GPT is clearly instructed what is `Findings` and what he should look at in code. I used [summary of Google engineering practices](https://github.com/google/eng-practices/blob/master/review/reviewer/looking-for.md#summary)
-* GPT is clearly instructed how he should respond with `Findings`. 
+* When user writes `Review PR` (which I will use as conversation started) GPT is instructed to just answer `Which PR?` to minimize text output for most common scenario. User can also write PR URL directly but that wouldn't sound like a chat, right?
+* GPT is instructed how it should proceed with PR URL and also that it can optionally download also full file content for broader context.
+* GPT is clearly instructed what is `Findings` and what it should look at in code. I used [summary of Google engineering practices](https://github.com/google/eng-practices/blob/master/review/reviewer/looking-for.md#summary)
+* GPT is clearly instructed how it should respond with `Findings`. 
   * I had to set `IMPORTANT` on instruction to not explain what the code is doing, because GPT was doing that all the time.
-* GPT is instructed how he should submit review
-  * GPT was tending to set `position` incorrectly, setting it too high, e.q. it was setting it as line of code. So I instructed him with full documentation and even with example of how `position` is calculated. 
+* GPT is instructed how it should submit review
+  * GPT was tending to set `position` incorrectly, setting it too high, e.q. it was setting it as line of code. So I instructed it with full documentation and even with example of how `position` is calculated. 
 
 ## Conversation starters
 Let's set just one `Review PR`, this is message what we explicitly instructed GPT on.
 
-# Lets test it
-Now let's test it on one PR done by dependabot in repo of this blogpost: https://github.com/gantrior/tomas-panik-blog/pull/5
+# Start review
+Now, let's test it on one PR done by dependabot in repo of this blogpost: https://github.com/gantrior/tomas-panik-blog/pull/5
 
 {{< img name="pr-review-demo" lazy=false size="origin" >}}
 
@@ -483,8 +487,8 @@ Great! It works.
 # A little tuning..
 Now let's try if GPT can skip responding comments to the user and submit comments directly, which would speed up the review a little bit. 
 
-Let's add following to the end of instructions:
-```
+Add following lines to the end of instructions:
+```text
 # When user request you to review PR with review submission
 If the request is `Review PR with review submission` you will only answer `Which PR?` and wait for user to submit PR link. After user provides PR url, you will review PR with the rules above, but do not print anything to the user, but you will assume that user wants you to submit findings as PR review. So you will submit review right away
 ```
@@ -496,7 +500,9 @@ And add new conversation starter: `Review PR with review submission`
 A little bit faster now.
 
 # Conclusion
-We have built GPT that could help us doing code reviews more efficiently. Custom GPTs shows us great potential, so let's see what we can build with it next. Keep an eye out on my upcoming blog posts as I will share more ideas of custom GPTs.
+We have built GPT that could help us doing code reviews more efficiently. 
+
+Custom GPTs show us great potential, so let's see what else we can build with it. I will share more ideas of custom GPTs in my upcoming blog posts.
 
 
 
