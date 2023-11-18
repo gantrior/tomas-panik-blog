@@ -1,5 +1,5 @@
 ---
-title: "Building a Custom GPT for Efficient GitHub Pull Request Reviews"
+title: "Vytvoření vlastního GPT pro efektivní revizi Pull Requestů na GitHubu"
 date: 2023-11-18
 draft: true
 tags:
@@ -25,57 +25,57 @@ resources:
     title: DEMO
 ---
 
-OpenAI recently introduced [custom GPTs](https://openai.com/blog/introducing-gpts). Let's briefly sum-up what GPTs are compared to classical ChatGPT: 
+Společnost OpenAI nedávno představila [vlastní GPT](https://openai.com/blog/introducing-gpts). Stručně shrňme, co jsou GPT ve srovnání s klasickým ChatGPT: 
 
-1. It contains custom predefined instructions
-2. It has custom conversation starters
-3. It can now contain multiple capabilities at once (in classic ChatGPT you had to choose one). Those are:
-    * Web browsing
-    * DALL-E image generation
-    * Code interpreter
-    * Custom Actions (plugins got kind of deprecated)
+1. Obsahuje vlastní předdefinované instrukce
+2. Obsahuje vlastní spouštěče konverzace
+3. Nyní může obsahovat více možností najednou (v klasickém ChatGPT jste si museli vybrat jednu). Těmito možnostmi jsou:
+    * Prohlížení webových stránek
+    * generování obrázků DALL-E
+    * interpreter kódu
+    * Vlastní akce (od Pluginů se už upouští)
 
-Especially, The last option is interesting, as it is now much easier to create integrations with custom actions. Developers no longer need to create plugin (which was such complex process).
+Zejména, Poslední možnost je zajímavá, protože je nyní mnohem jednodušší vytvářet integrace s vlastními akcemi. Vývojáři již nemusí vytvářet plugin (což byl dost složitý proces).
 
-So let's try to build GPT that will help developers with Pull request (PR) reviews. 
+Pokusme se tedy vytvořit GPT, který vývojářům pomůže s revizemi Pull Requestů.
 
-# Steps
-Goal is to review existing GitHub PR by GPT. In case of any issue found GPT creates comments (in PENDING state).
+# Kroky
+Cílem je zrevidovat stávající PR na GitHubu od GPT. V případě nalezení problému GPT vytvoří komentáře (ve stavu PENDING).
 
-Let's define the steps:
+Definujme kroky:
 
-1. (As a reviewer) I will paste GitHub PR URL to GPT
-2. It will download diff of PR using GitHub API (authenticated as me so it will have access even to private repositories)
-3. It will review diff, analyze it for bugs, code smells and suggest improvements
-4. It will write back those findings and ask me if I want to submit review comments in PENDING state
-5. By typing "Yes" it will submit these review commets
+1. (Jako reviewer) vložím adresu URL PR GitHubu do GPT chatu.
+2. GPT Stáhne diff PR pomocí GitHub API (ověřený jako já, takže bude mít přístup i do soukromých repozitářů).
+3. GPT Zkontroluje diff, zanalyzuje ho na chyby a problémy a navrhne vylepšení.
+4. GPT mi odepíše tato zjištění a zeptá se mě, jestli chci odeslat komentáře do PR ve stavu PENDING.
+5. Po zadání "Yes" odešle tyto revizní komentáře
 
-The purpose is not to submit all GPT suggestions without human check. I want to use GPTs comments just as a hint what I should look at, so I will be updating/deleting it's comments most of the time. Therefore we must make sure that review submitted to GitHub remains in PENDING state and those automatic comments are recognizable so I use `By GPT:` prefix.
+Účelem není odeslat všechny návrhy GPT bez lidské kontroly. Chci používat komentáře GPT jen jako nápovědu, na co se mám podívat, takže budu většinu času aktualizovat/mazat jeho komentáře. Proto musíme zajistit, aby revize odeslaná na GitHub zůstala ve stavu PENDING a tyto automatické komentáře byly rozpoznatelné, takže používám předponu `By GPT:`.
 
-# Creating custom GPT
-Starting with custom GPT you must have GPT Plus subscription! 
-Go to [ChatGTP website](chat.openai.com). It can be created by clicking `Explore` and then `Create a GPT` (see picture bellow).
+# Vytvoření vlastního GPT
+Při vytváření vlastního GPT musíte mít předplatné GPT Plus! 
+Přejděte na webové stránky [ChatGTP](chat.openai.com). Vytvoříte ji kliknutím na `Explore` a poté na `Create a GPT` (viz obrázek níže).
 
 {{< img name="create-a-gpt" lazy=false size="origin" >}}
 
-# GPT configuration
-So let's go ahead and configure GPT, we will skip GPT Builder and configure everything manually.
+# Konfigurace GPT
+Pokračujme tedy v konfiguraci GPT, přeskočíme GPT Builder a vše nakonfigurujeme ručně.
 
-## Title and description
-I set following:
+## Název a popis
+Nastavil jsem následující:
 
-Name: `GitHub PR Code Reviewer`
+Název: `GitHub PR Code Reviewer`
 
-Description: `Expert at GitHub PR code reviews, using GitHub API for insightful feedback.`
+Popis: `Expert at GitHub PR code reviews, using GitHub API for insightful feedback.`
 
 {{< img name="title-and-description" lazy=false size="origin" >}}
 
-## Actions
+## Akce
 
-Let's configure actions first before instructions, as it is fundamental part of the configuration.
-Actions are manifest of [OpenAPI specification](https://spec.openapis.org/oas/v3.1.0) written in JSON format. 
+Nejdříve nakonfigurujme akce a teprve potom instrukce, protože jsou fundamentální součástí konfigurace.
+Akce jsou manifestem [specifikace OpenAPI](https://spec.openapis.org/oas/v3.1.0) zapsaným ve formátu JSON. 
 
-Click `Create new actions` in GPT configuration and set following schema:
+Klikněte na `Create new actions` v konfiguraci GPT a nastavte následující schéma:
 ```json
 {
   "openapi": "3.1.0",
@@ -369,31 +369,31 @@ Click `Create new actions` in GPT configuration and set following schema:
 }
 ```
 
-We allow GPT to do 3 actions using GitHub API:
-* **GetPullRequestDiff** (`GET` - `/repos/{owner}/{repo}/pulls/{pull_number}/files`) - download diff's for all files in PR
-  * Note: I tried to use `/repos/{owner}/{repo}/pulls/{pull_number}` with header `Accept` set to `application/vnd.github.v3.diff`, but it turns out that GPT is not allowed to set headers, so it can use only endpoints where overriding header is not necessary. 
-* **GetFileContent** (`GET` - `/repos/{owner}/{repo}/contents/{path}`) - optional. I don't know if GPT will ever use this.
-* **SubmitPullRequestReview** (`POST` - `/repos/{owner}/{repo}/pulls/{pull_number}/reviews`) - submitting PR review
-  * Note: We don't define `event` property for body, because we don't want GPT to fill it. This will make sure that the PR comment is always in PENDING state.
+Pomocí rozhraní GitHub API umožňujeme GPT provádět 3 akce:
+* **GetPullRequestDiff** (`GET` - `/repos/{owner}/{repo}/pulls/{pull_number}/files`) - stáhne diff pro všechny soubory v PR.
+  * Poznámka: Zkoušel jsem použít `/repos/{vlastník}/{repo}/pulls/{pull_number}` s hlavičkou `Accept` nastavenou na `application/vnd.github.v3.diff`, ale ukázalo se, že GPT nemá povoleno nastavovat hlavičky, takže může použít pouze routy, kde nadefinování hlavičky není nutné. 
+* **GetFileContent** (`GET` - `/repos/{owner}/{repo}/contents/{path}`) - nepovinné. Nevím, zda to GPT někdy použije.
+* **SubmitPullRequestReview** (`POST` - `/repos/{owner}/{repo}/pulls/{pull_number}/reviews`) - odeslání PR review.
+  * Poznámka: Pro body nedefinujeme vlastnost `event`, protože nechceme, aby ji GPT vyplňoval. Tím zajistíme, že komentář PR bude vždy ve stavu PENDING.
 
-## Authentication
-There are two ways how GPT can authenticate with API requests:
-* API key - basic, bearer or custom
+## Ověřování
+Existují dva způsoby, jak může GPT ověřovat požadavky API:
+* API klíč - basic, bearer nebo vlastní typ autorizace.
 * OAuth
 
-Although OAuth is probably better way I am going to use API key for now. Steps to generate it in GitHub are:
-* Go to `https://github.com/settings/tokens`
-* Click `Generate new token` (I use classic tokens)
-* Fill in `Note`, `Expiration` by your preference and check in `Scopes` `repo` scope
-* Click `Generate token` and store token for later use
+I když je OAuth pravděpodobně lepší způsob, budu prozatím používat API klíč. Kroky k jeho vygenerování v GitHubu jsou následující:
+* Přejděte na `https://github.com/settings/tokens`
+* Klikněte na `Generate new token` (já používám klasické tokeny).
+* Vyplňte `Note`, `Expiration` podle svých preferencí a v `Scopes` zaškrtněte `repo` scope.
+* Klikněte na `Generate token` a uložte token pro pozdější použití.
 
-Now, configure authentication in GPT configuration. 
+Nyní nakonfigurujte ověřování v konfiguraci GPT. 
 
 {{< img name="gpt-authentication" lazy=false size="origin" >}}
 
 ## Instructions
 
-Most important part are instructions. With a lot of fine tuning I came up with this:
+Nejdůležitější částí jsou pokyny. Po dlouhém dolaďování jsem přišel s tímto:
 
 ```text
 The primary role of 'GitHub PR Code Reviewer' is to assist in GitHub Pull Request code reviews. 
@@ -465,47 +465,46 @@ Here are rules of submitted comments:
 * Full path to the file and line of code of Finding will never be included in comment body.
 ```
 
-Explanation of instructions:
-* When user writes `Review PR` (which I will use as conversation started) GPT is instructed to just answer `Which PR?` to minimize text output for most common scenario. User can also write PR URL directly but that wouldn't sound like a chat, right?
-* GPT is instructed how it should proceed with PR URL and also that it can optionally download also full file content for broader context.
-* GPT is clearly instructed what is `Findings` and what it should look at in code. I used [summary of Google engineering practices](https://github.com/google/eng-practices/blob/master/review/reviewer/looking-for.md#summary)
-* GPT is clearly instructed how it should respond with `Findings`. 
-  * I had to set `IMPORTANT` on instruction to not explain what the code is doing, because GPT was doing that all the time.
-* GPT is instructed how it should submit review
-  * GPT was tending to set `position` incorrectly, setting it too high, e.q. it was setting it as line of code. So I instructed it with full documentation and even with example of how `position` is calculated. 
+Vysvětlení instrukcí:
+* Když uživatel napíše `Review PR` (což použiji jako začátek konverzace), GPT je instruován, aby pouze odpověděl `Which PR?`, aby se minimalizoval textový výstup pro nejběžnější scénář. Uživatel může také napsat přímo URL PR, ale to by neznělo jako chat, že?
+* GPT je instruován, jak má postupovat s PR URL a také, že může volitelně stáhnout i celý obsah souboru pro širší kontext.
+* GPT je jasně instruován, co je to `Findings` a na co se má v kódu podívat. Použil jsem [souhrn inženýrských postupů Google](https://github.com/google/eng-practices/blob/master/review/reviewer/looking-for.md#summary).
+* GPT je jasně instruován, jak má reagovat na `Findings`. 
+  * Musel jsem nastavit `IMPORTANT` na instrukci, aby nevysvětloval, co kód dělá, protože to GPT dělal pořád.
+* GPT je instruován, jak má odesílat revizi
+  * GPT měl tendenci nastavovat `position` parametr nesprávně, nastavoval jí na příliš vysoké číslo, např. ji nastavoval jako řádek kódu. Tak jsem ho poučil kompletní dokumentací a dokonce i příkladem, jak se `position` počítá.
 
-## Conversation starters
-Let's set just one `Review PR`, this is message what we explicitly instructed GPT on.
+## Začátek konverzace
+Nastavíme pouze jednu zprávu `Review PR`, což je zpráva, kterou jsme výslovně zadali GPT.
 
-# Start review
-Now, let's test it on one PR done by dependabot in repo of this blogpost: https://github.com/gantrior/tomas-panik-blog/pull/5
+# Spusťte recenzi
+Nyní to otestujme na jednom PR provedeném dependabotem v repozitáři tohoto blogpostu: https://github.com/gantrior/tomas-panik-blog/pull/5.
 
 {{< img name="pr-review-demo" lazy=false size="origin" >}}
 
-Great! It works. 
+Skvělé! Funguje to. 
 
-# A little tuning..
-Now let's try if GPT can skip responding comments to the user and submit comments directly, which would speed up the review a little bit. 
+# Ladění..
+Nyní zkusíme, zda GPT dokáže přeskočit odpovídání na komentáře uživateli a odesílat komentáře přímo, což by trochu urychlilo hodnocení. 
 
-Add following lines to the end of instructions:
+Na konec instrukcí přidejte následující řádky:
 ```text
 # When user request you to review PR with review submission
 If the request is `Review PR with review submission` you will only answer `Which PR?` and wait for user to submit PR link. After user provides PR url, you will review PR with the rules above, but do not print anything to the user, but you will assume that user wants you to submit findings as PR review. So you will submit review right away
 ```
 
-And add new conversation starter: `Review PR with review submission` 
+A přidejte nový začátek konverzace: `Review PR with review submission` 
 
 {{< img name="pr-review-demo2" lazy=false size="origin" >}}
 
-A little bit faster now.
+Nyní o něco rychlejší.
 
-# Conclusion
-We have built GPT that could help us doing code reviews more efficiently. 
+# Závěr
+Vytvořili jsme GPT, který by nám mohl pomoci efektivněji provádět revize kódu. 
 
-Custom GPTs show us great potential, so let's see what else we can build with it. I will share more ideas of custom GPTs in my upcoming blog posts.
+Vlastní GPT nám ukazuje velký potenciál, takže se podíváme, co dalšího s ním můžeme vytvořit. O další nápady na vlastní GPT se podělím v příštích příspěvcích na blogu.
 
-Feel free to leave a comment below.
-
+Neváhejte a zanechte komentář níže.
 
 
 
