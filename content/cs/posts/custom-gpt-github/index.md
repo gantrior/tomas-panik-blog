@@ -25,41 +25,41 @@ resources:
     title: DEMO
 ---
 
-Společnost OpenAI nedávno představila [vlastní GPT](https://openai.com/blog/introducing-gpts). Stručně shrňme, co jsou GPT ve srovnání s klasickým ChatGPT: 
+Společnost OpenAI nedávno představila [vlastní GPT](https://openai.com/blog/introducing-gpts). Stručně shrňme, co je GPT ve srovnání s klasickým ChatGPT: 
 
 1. Obsahuje vlastní předdefinované instrukce
 2. Obsahuje vlastní spouštěče konverzace
-3. Nyní může obsahovat více možností najednou (v klasickém ChatGPT jste si museli vybrat jednu). Těmito možnostmi jsou:
-    * Prohlížení webových stránek
+3. Může plnit více z následujících funkcí najednou (v klasickém ChatGPT jste si museli vybrat jednu). Těmito funkcemi jsou:
+    * prohlížení webových stránek
     * generování obrázků DALL-E
     * interpreter kódu
-    * Vlastní akce (od Pluginů se už upouští)
+    * vlastní akce (náhražka dříve používaných Pluginů)
 
-Zejména, Poslední možnost je zajímavá, protože je nyní mnohem jednodušší vytvářet integrace s vlastními akcemi. Vývojáři již nemusí vytvářet plugin (což byl dost složitý proces).
+Zejména poslední možnost je zajímavá, protože je nyní mnohem jednodušší vytvářet integrace s vlastními akcemi. Vývojáři již nemusí vytvářet plugin (což byl dost složitý proces).
 
-Pokusme se tedy vytvořit GPT, který vývojářům pomůže s revizemi Pull Requestů.
+Pokusme se tedy vytvořit GPT, který vývojářům pomůže s revizemi Pull Requestů (PR).
 
 # Kroky
-Cílem je zrevidovat stávající PR na GitHubu od GPT. V případě nalezení problému GPT vytvoří komentáře (ve stavu PENDING).
+Cílem je zrevidovat stávající PR na GitHubu s pomocí GPT. V případě nalezení problému GPT vytvoří komentáře (ve stavu PENDING).
 
 Definujme kroky:
 
 1. (Jako reviewer) vložím adresu URL PR GitHubu do GPT chatu.
-2. GPT Stáhne diff PR pomocí GitHub API (ověřený jako já, takže bude mít přístup i do soukromých repozitářů).
-3. GPT Zkontroluje diff, zanalyzuje ho na chyby a problémy a navrhne vylepšení.
-4. GPT mi odepíše tato zjištění a zeptá se mě, jestli chci odeslat komentáře do PR ve stavu PENDING.
-5. Po zadání "Yes" odešle tyto revizní komentáře
+2. GPT stáhne diff PR pomocí GitHub API (ověřený jako já, takže bude mít přístup i do soukromých repozitářů).
+3. GPT zkontroluje diff, zanalyzuje ho na chyby a problémy a navrhne vylepšení.
+4. GPT mi vrátí tato zjištění a zeptá se mě, jestli je chci odeslat formou komentáře (ve stavu PENDING) do PR.
+5. Po kliknutí na "Yes" odešle tyto revizní komentáře.
 
-Účelem není odeslat všechny návrhy GPT bez lidské kontroly. Chci používat komentáře GPT jen jako nápovědu, na co se mám podívat, takže budu většinu času aktualizovat/mazat jeho komentáře. Proto musíme zajistit, aby revize odeslaná na GitHub zůstala ve stavu PENDING a tyto automatické komentáře byly rozpoznatelné, takže používám předponu `By GPT:`.
+Účelem není odeslat všechny návrhy GPT, aniž by je reviewer zkontroloval. Chci používat komentáře GPT jen jako nápovědu, na co se mám podívat, takže budu většinu času tyto komentáře aktualizovat/mazat. Proto je nutné zajistit, aby revize odeslaná na GitHub zůstala ve stavu PENDING a tyto automatické komentáře byly rozpoznatelné, takže používám prefix `By GPT:`.
 
 # Vytvoření vlastního GPT
 Při vytváření vlastního GPT musíte mít předplatné GPT Plus! 
-Přejděte na webové stránky [ChatGTP](chat.openai.com). Vytvoříte ji kliknutím na `Explore` a poté na `Create a GPT` (viz obrázek níže).
+Přejděte na webové stránky [ChatGTP](chat.openai.com). Vlastní GPT vytvoříme kliknutím na `Explore` a poté na `Create a GPT` (viz obrázek níže).
 
 {{< img name="create-a-gpt" lazy=false size="origin" >}}
 
 # Konfigurace GPT
-Pokračujme tedy v konfiguraci GPT, přeskočíme GPT Builder a vše nakonfigurujeme ručně.
+Pokračujme tedy v konfiguraci GPT, přeskočíme GPT Builder a vše nakonfigurujeme manuálně.
 
 ## Název a popis
 Nastavil jsem následující:
@@ -72,7 +72,7 @@ Popis: `Expert at GitHub PR code reviews, using GitHub API for insightful feedba
 
 ## Akce
 
-Nejdříve nakonfigurujme akce a teprve potom instrukce, protože jsou fundamentální součástí konfigurace.
+Nejdříve nakonfigurujeme akce a teprve potom instrukce, protože jsou základní součástí konfigurace.
 Akce jsou manifestem [specifikace OpenAPI](https://spec.openapis.org/oas/v3.1.0) zapsaným ve formátu JSON. 
 
 Klikněte na `Create new actions` v konfiguraci GPT a nastavte následující schéma:
@@ -369,7 +369,7 @@ Klikněte na `Create new actions` v konfiguraci GPT a nastavte následující sc
 }
 ```
 
-Pomocí rozhraní GitHub API umožňujeme GPT provádět 3 akce:
+Pomocí rozhraní GitHub API umožníme GPT provádět 3 akce:
 * **GetPullRequestDiff** (`GET` - `/repos/{owner}/{repo}/pulls/{pull_number}/files`) - stáhne diff pro všechny soubory v PR.
   * Poznámka: Zkoušel jsem použít `/repos/{vlastník}/{repo}/pulls/{pull_number}` s hlavičkou `Accept` nastavenou na `application/vnd.github.v3.diff`, ale ukázalo se, že GPT nemá povoleno nastavovat hlavičky, takže může použít pouze routy, kde nadefinování hlavičky není nutné. 
 * **GetFileContent** (`GET` - `/repos/{owner}/{repo}/contents/{path}`) - nepovinné. Nevím, zda to GPT někdy použije.
@@ -387,13 +387,13 @@ I když je OAuth pravděpodobně lepší způsob, budu prozatím používat API 
 * Vyplňte `Note`, `Expiration` podle svých preferencí a v `Scopes` zaškrtněte `repo` scope.
 * Klikněte na `Generate token` a uložte token pro pozdější použití.
 
-Nyní nakonfigurujte ověřování v konfiguraci GPT. 
+Nyní nakonfigurujeme ověřování v konfiguraci GPT. 
 
 {{< img name="gpt-authentication" lazy=false size="origin" >}}
 
 ## Instructions
 
-Nejdůležitější částí jsou pokyny. Po dlouhém dolaďování jsem přišel s tímto:
+Nejdůležitější částí jsou instrukce. Po dlouhém dolaďování jsem přišel s tímto:
 
 ```text
 The primary role of 'GitHub PR Code Reviewer' is to assist in GitHub Pull Request code reviews. 
@@ -471,21 +471,21 @@ Vysvětlení instrukcí:
 * GPT je jasně instruován, co je to `Findings` a na co se má v kódu podívat. Použil jsem [souhrn inženýrských postupů Google](https://github.com/google/eng-practices/blob/master/review/reviewer/looking-for.md#summary).
 * GPT je jasně instruován, jak má reagovat na `Findings`. 
   * Musel jsem nastavit `IMPORTANT` na instrukci, aby nevysvětloval, co kód dělá, protože to GPT dělal pořád.
-* GPT je instruován, jak má odesílat revizi
-  * GPT měl tendenci nastavovat `position` parametr nesprávně, nastavoval jí na příliš vysoké číslo, např. ji nastavoval jako řádek kódu. Tak jsem ho poučil kompletní dokumentací a dokonce i příkladem, jak se `position` počítá.
+* GPT je instruován, jak má odesílat revizi.
+  * GPT měl tendenci nastavovat `position` parametr nesprávně, nastavoval ho na příliš vysoké číslo, např. ho nastavoval jako řádek kódu. Tak jsem ho poučil kompletní dokumentací a dokonce i příkladem, jak se `position` počítá.
 
 ## Začátek konverzace
-Nastavíme pouze jednu zprávu `Review PR`, což je zpráva, kterou jsme výslovně zadali GPT.
+Nastavíme pouze jeden: `Review PR`, což je zpráva, kterou jsme explicitně instruovali GPT.
 
-# Spusťte recenzi
-Nyní to otestujme na jednom PR provedeném dependabotem v repozitáři tohoto blogpostu: https://github.com/gantrior/tomas-panik-blog/pull/5.
+# Spuštění revize
+Nyní to otestujme na jednom PR vytvořeném dependabotem v repozitáři tohoto blogpostu: https://github.com/gantrior/tomas-panik-blog/pull/5.
 
 {{< img name="pr-review-demo" lazy=false size="origin" >}}
 
 Skvělé! Funguje to. 
 
 # Ladění..
-Nyní zkusíme, zda GPT dokáže přeskočit odpovídání na komentáře uživateli a odesílat komentáře přímo, což by trochu urychlilo hodnocení. 
+Nyní zkusme, zda GPT dokáže přeskočit odpovídání na komentáře uživateli a odesílat komentáře přímo, což by revizi trochu urychlilo. 
 
 Na konec instrukcí přidejte následující řádky:
 ```text
@@ -497,12 +497,12 @@ A přidejte nový začátek konverzace: `Review PR with review submission`
 
 {{< img name="pr-review-demo2" lazy=false size="origin" >}}
 
-Nyní o něco rychlejší.
+Nyní je to o něco rychlejší.
 
 # Závěr
 Vytvořili jsme GPT, který by nám mohl pomoci efektivněji provádět revize kódu. 
 
-Vlastní GPT nám ukazuje velký potenciál, takže se podíváme, co dalšího s ním můžeme vytvořit. O další nápady na vlastní GPT se podělím v příštích příspěvcích na blogu.
+Vlastní GPT nám ukazuje velký potenciál, takže uvidíme, co dalšího nám budoucnost přinese. O další nápady na vlastní GPT se podělím v příštích příspěvcích na tomto blogu.
 
 Neváhejte a zanechte komentář níže.
 
