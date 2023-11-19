@@ -39,10 +39,10 @@ Zejména poslední možnost je zajímavá, protože je nyní mnohem jednodušš�
 
 Pokusme se tedy vytvořit GPT, který vývojářům pomůže s revizemi Pull Requestů (PR).
 
-# Kroky
+# Postup
 Cílem je zrevidovat stávající PR na GitHubu s pomocí GPT. V případě nalezení problému GPT vytvoří komentáře (ve stavu PENDING).
 
-Definujme kroky:
+Definujme jednotlivé kroky:
 
 1. (Jako reviewer) vložím adresu URL PR GitHubu do GPT chatu.
 2. GPT stáhne diff PR pomocí GitHub API (ověřený jako já, takže bude mít přístup i do soukromých repozitářů).
@@ -72,7 +72,7 @@ Popis: `Expert at GitHub PR code reviews, using GitHub API for insightful feedba
 
 ## Akce
 
-Nejdříve nakonfigurujeme akce a teprve potom instrukce, protože jsou základní součástí konfigurace.
+Nejdříve nakonfigurujeme akce a teprve potom instrukce, protože jsou nezbytnou součástí konfigurace.
 Akce jsou manifestem [specifikace OpenAPI](https://spec.openapis.org/oas/v3.1.0) zapsaným ve formátu JSON. 
 
 Klikněte na `Create new actions` v konfiguraci GPT a nastavte následující schéma:
