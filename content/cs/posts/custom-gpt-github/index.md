@@ -1,7 +1,7 @@
 ---
 title: "Vytvoření vlastního GPT pro efektivní revizi Pull Requestů na GitHubu"
-date: 2023-11-18
-draft: true
+date: 2023-11-19
+draft: false
 tags:
   - AI
   - ChatGPT

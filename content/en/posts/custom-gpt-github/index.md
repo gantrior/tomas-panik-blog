@@ -1,7 +1,7 @@
 ---
 title: "Building a Custom GPT for Efficient GitHub Pull Request Reviews"
-date: 2023-11-18
-draft: true
+date: 2023-11-19
+draft: false
 tags:
   - AI
   - ChatGPT
