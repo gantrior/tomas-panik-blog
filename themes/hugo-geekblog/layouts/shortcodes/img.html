@@ -7,7 +7,7 @@
 {{- with $source }}
   {{- $caption := default .Title $customAlt }}
   {{- $isSVG := (eq .MediaType.SubType "svg") }}
-
+  {{- $isGif := (eq .MediaType.SubType "gif") }}
   {{- $origin := .Permalink }}
   {{- if $isSVG }}
     {{- $data.SetInMap "size" "profile" "180" }}
@@ -15,6 +15,12 @@
     {{- $data.SetInMap "size" "small" "600" }}
     {{- $data.SetInMap "size" "medium" "1200" }}
     {{- $data.SetInMap "size" "large" "1800" }}
+  {{- else if $isGif }}
+    {{- $data.SetInMap "size" "profile" (.Permalink) }}
+    {{- $data.SetInMap "size" "tiny" (.Permalink) }}
+    {{- $data.SetInMap "size" "small" (.Permalink) }}
+    {{- $data.SetInMap "size" "medium" (.Permalink) }}
+    {{- $data.SetInMap "size" "large" (.Permalink) }}
   {{- else }}
     {{- $data.SetInMap "size" "profile" (.Fill "180x180 Center").Permalink }}
     {{- $data.SetInMap "size" "tiny" (.Resize "320x").Permalink }}

@@ -208,6 +208,10 @@ p, section {
   align-items: center;
 }
 
+figcaption {
+  color: #303030;
+}
+
 @media screen and (max-width: 39rem) {
   .gblog-header__col-3 {
     flex-wrap: wrap;
